@@ -28,6 +28,36 @@ for (const auto mass : masses) {
 }
 ```
 
+## How to setup the training environment
+
+For example for a cvmfs-enabled CentOS7 device:
+```bash
+setupATLAS
+lsetup "lcgenv -p LCG_96b x86_64-centos7-gcc62-opt Python pip"
+python -m pip install --user virtualenv
+
+# Create virtual environment
+python -m virtualenv pnn_training_env
+
+# Activate environment and install packages
+source pnn_training_env/bin/activate
+
+pip install numpy
+pip install pandas
+pip install sklearn
+pip install joblib
+pip install uproot
+pip install keras
+pip install tensorflow
+```
+
+If you return later it should suffice to do:
+```bash
+setupATLAS
+lsetup "lcgenv -p LCG_96b x86_64-centos7-gcc62-opt Python pip"
+source pnn_training_env/bin/activate
+```
+
 ## How to convert model with `lwtnn`
 
 ```bash
