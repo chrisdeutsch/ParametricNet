@@ -1,62 +1,63 @@
 #!/usr/bin/env python
 import argparse
 import joblib
-import pnet
 
-import uproot
+import logging
 
+from dataloader import DataLoader
+from parametricnet import ParametricNet
+
+logging.getLogger().setLevel(logging.INFO)
 
 
 def main(args):
-    # Load inputs
-    f = uproot.open(args.ntuple)
-    sig_df = pnet.get_sig_df(f)
-    bkg_df = pnet.get_bkg_df(f)
+    # Load inputs & preprocess
+    data_loader = DataLoader(fold=args.fold)
+    data_loader.bkg_trees = args.bkg_trees
+    data_loader.input_vars = args.input_vars
 
-    # To remove signals from df
-    if args.remove_mass:
-        sig_df = sig_df[sig_df.mass != args.remove_mass]
+    X, Y, W = data_loader.load(args.ntuple)
 
-    # Apply selection
-    if args.even:
-        fold = "even"
-    elif args.odd:
-        fold = "odd"
-    else:
-        raise RuntimeError("No fold specified")
+    # Training
+    net = ParametricNet()
+    net.epochs = args.epochs
+    net.batch_size = args.batch_size
+    net.learning_rate = args.learning_rate
+    net.learning_rate_decay = args.learning_rate_decay
+    net.layer_size = args.layer_size
 
-    sel_sig_df = pnet.apply_selection(sig_df, fold=fold)
-    sel_bkg_df = pnet.apply_selection(bkg_df, fold=fold)
+    net.train(X, Y, W)
 
-    X, Y, W = pnet.prepare_inputs(sel_sig_df, sel_bkg_df)
+    # Save outputs
+    scaler_fn = "scaler.pkl"
+    model_fn = "model.h5"
 
-    scaler, model = pnet.train(X, Y, W,
-                               epochs=args.epochs,
-                               layer_size=args.layer_size,
-                               learning_rate=args.learning_rate,
-                               learning_rate_decay=args.learning_rate_decay
-    )
-    joblib.dump(scaler, "scaler.pkg")
-    model.save("model.h5")
+    logging.info("Saving scaling factors in " + scaler_fn)
+    joblib.dump(net.scaler, "scaler.pkl")
+
+    logging.info("Saving network weights in " + model_fn)
+    net.model.save("model.h5")
 
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
     parser.add_argument("ntuple", help="Ntuple with MVA trees")
-    parser.add_argument("-l", "--layer-size", default=[32, 32, 32], nargs="+",
-                        type=int, help="List of hidden layer sizes")
+
+    # DataLoader parameters
+    parser.add_argument("--bkg-trees", default=["ttbar", "stop", "Ztautau",
+                                                "Fake", "VH", "Diboson",
+                                                "Wtaunu"])
+    parser.add_argument("--input-vars", default=["dRTauTau", "dRBB", "mMMC",
+                                                 "mBB", "mHH"])
+    parser.add_argument("--fold", choices=["even", "odd"], required=True)
+
+    # ParametricNet parameters
     parser.add_argument("-e", "--epochs", default=100, type=int)
+    parser.add_argument("--batch-size", default=64, type=int)
     parser.add_argument("--learning-rate", default=0.1, type=float)
     parser.add_argument("--learning-rate-decay", default=1e-5, type=float)
-
-    parser.add_argument("--remove-mass", type=int, default=None)
-
-    split = parser.add_mutually_exclusive_group(required=True)
-    split.add_argument("--even", action="store_true",
-                       help="Run on even event numbers")
-    split.add_argument("--odd", action="store_true",
-                       help="Run on odd event numbers")
+    parser.add_argument("-l", "--layer-size", default=[32, 32, 32], nargs="+",
+                        type=int, help="List of hidden layer sizes")
 
     args = parser.parse_args()
-
     main(args)
