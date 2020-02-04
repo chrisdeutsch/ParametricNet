@@ -44,15 +44,15 @@ class DataLoader:
             logging.info("Adding signal tree {} with mass {}".format(treename, mass))
 
         # Setting mass transform
-        mass_min = float(min(mass_map.keys()))
-        mass_max = float(max(mass_map.keys()))
-        self.mass_transform = lambda x: (x - mass_min) / (mass_max - mass_min)
+        self.mass_min = float(min(mass_map.keys()))
+        self.mass_max = float(max(mass_map.keys()))
+        self.mass_transform = lambda x: (x - self.mass_min) / (self.mass_max - self.mass_min)
 
         logging.info("Using mass transform (m - {mass_min}) / ({mass_max} - {mass_min})".format(
-            mass_min=mass_min, mass_max=mass_max))
+            mass_min=self.mass_min, mass_max=self.mass_max))
 
-        assert abs(self.mass_transform(mass_min)) < 1e-9
-        assert abs(self.mass_transform(mass_max) - 1.) < 1e-9
+        assert abs(self.mass_transform(self.mass_min)) < 1e-9
+        assert abs(self.mass_transform(self.mass_max) - 1.) < 1e-9
 
         # Read dataframes
         dfs = []

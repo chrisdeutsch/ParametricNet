@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 import argparse
 import joblib
-
+import json
 import logging
 
 from dataloader import DataLoader
@@ -29,14 +29,22 @@ def main(args):
     net.train(X, Y, W)
 
     # Save outputs
-    scaler_fn = "scaler.pkl"
-    model_fn = "model.h5"
+    scaler_out = "scaler.json"
+    logging.info("Saving scaling factors in " + scaler_out)
 
-    logging.info("Saving scaling factors in " + scaler_fn)
-    joblib.dump(net.scaler, "scaler.pkl")
+    # Fill variable names & scaling factors into json
+    outputs = {
+        "input_vars": data_loader.input_vars + ["mass"],
+        "center": list(net.scaler.center_) + [data_loader.mass_min],
+        "scale": list(net.scaler.scale_) + [data_loader.mass_max - data_loader.mass_min]
+    }
 
-    logging.info("Saving network weights in " + model_fn)
-    net.model.save("model.h5")
+    with open(scaler_out, "w") as outf:
+        json.dump(outputs, outf, indent=4)
+
+    model_out = "model.h5"
+    logging.info("Saving network weights in " + model_out)
+    net.model.save(model_out)
 
 
 if __name__ == "__main__":
