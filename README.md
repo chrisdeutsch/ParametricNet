@@ -58,6 +58,24 @@ lsetup "lcgenv -p LCG_96b x86_64-centos7-gcc62-opt Python pip"
 source pnn_training_env/bin/activate
 ```
 
+## How to perform the training
+
+Try looking at the output of `--help` of the `train.py` script.
+
+A couple of important options are:
+
+- `--fold {even,odd}`: specify whether to train on events with even / odd event numbers
+- `--input-vars`: list of input variables used for the training (this does not include the parameter)
+- `--bkg-trees`: list of tree names for background
+
+**Important**: Ensure that your selection is already applied at the ntuple
+stage. The only selection applied by the training script is removing negative
+weights and selecting the fold.
+
+For more options check the `DataLoader.__init__` and `ParametricNet.__init__`
+functions and adapt the training script if necessary.
+
+
 ## How to convert model with `lwtnn`
 
 ```bash
