@@ -33,13 +33,12 @@ void ParametricNet::init(const std::string &filename_even,
   m_val_map = &m_node_map[m_input_layer_name];
 }
 
-void ParametricNet::set_vars(double DRTauTau, double dRBB, double mMMC,
-                             double mBB, double mHH) {
-  (*m_val_map)["DRTauTau"] = DRTauTau;
-  (*m_val_map)["dRBB"] = dRBB;
-  (*m_val_map)["mMMC"] = mMMC;
-  (*m_val_map)["mBB"] = mBB;
-  (*m_val_map)["mHH"] = mHH;
+void ParametricNet::reset() {
+  m_val_map->clear();
+}
+
+void ParametricNet::set_variable(const std::string &name, const double val) {
+  (*m_val_map)[name] = val;
 }
 
 float ParametricNet::evaluate(float parameter, Fold fold) {

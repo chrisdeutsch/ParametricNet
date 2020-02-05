@@ -23,10 +23,8 @@ public:
   // filename_odd: Network trained on odd event numbers
   void init(const std::string &filename_even,
             const std::string &filename_odd);
-
-  void set_vars(double DRTauTau, double dRBB, double mMMC,
-                double mBB, double mHH);
-
+  void reset();
+  void set_variable(const std::string &name, const double val);
   float evaluate(float parameter, Fold fold);
 
 private:
