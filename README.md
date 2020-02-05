@@ -33,6 +33,8 @@ A couple of important options are:
 
 - `--fold {even,odd}`: specify whether to train on events with even / odd event numbers
 - `--input-vars`: list of input variables used for the training (this does not include the parameter)
+- `--sig-tree-regex`: Python regular expression to find signal trees and mass.
+                      E.g. for a tree `Xtohh500` this would be `(Xtohh(\d+))` (note the two capture groups).
 - `--bkg-trees`: list of tree names for background
 
 **Important**: Ensure that your selection is already applied at the ntuple

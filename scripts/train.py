@@ -13,6 +13,7 @@ logging.getLogger().setLevel(logging.INFO)
 def main(args):
     # Load inputs & preprocess
     data_loader = DataLoader(fold=args.fold)
+    data_loader.sig_tree_regex = args.sig_tree_regex
     data_loader.bkg_trees = args.bkg_trees
     data_loader.input_vars = args.input_vars
 
@@ -52,6 +53,7 @@ if __name__ == "__main__":
     parser.add_argument("ntuple", help="Ntuple with MVA trees")
 
     # DataLoader parameters
+    parser.add_argument("--sig-tree-regex", default=r"(Xtohh(\d+))")
     parser.add_argument("--bkg-trees", default=["ttbar", "stop", "Ztautau",
                                                 "Fake", "VH", "Diboson",
                                                 "Wtaunu"])
