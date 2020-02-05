@@ -6,15 +6,15 @@ import numpy as np
 
 
 parser = argparse.ArgumentParser()
-parser.add_argument("arch")
+parser.add_argument("spec")
 parser.add_argument("scaler")
 
 args = parser.parse_args()
 
 
 # Load network specification
-with open(args.arch) as f_arch:
-    arch = json.load(f_arch)
+with open(args.spec) as f_spec:
+    arch = json.load(f_spec)
 
 # Load scaler specification
 with open(args.scaler) as f_scaler:
