@@ -14,7 +14,7 @@ args = parser.parse_args()
 
 # Load network specification
 with open(args.spec) as f_spec:
-    arch = json.load(f_spec)
+    spec = json.load(f_spec)
 
 # Load scaler specification
 with open(args.scaler) as f_scaler:
