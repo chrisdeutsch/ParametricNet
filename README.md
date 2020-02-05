@@ -92,8 +92,13 @@ m_pnn->init(workdir + "/data/ParametricNet/pnet_even_v12.json",
 // When applying with 'evaluate(mass, Fold::Odd)' it applies the network that was trained
 // on even numbers and vice versa
 
-// In 'execute' set your variables once:
-m_pnn->set_vars(dRTauTau, dRBB, mMMC, mBB, mHH);
+// In 'execute' set your variables once (the names are the same as in the training ntuple):
+m_pnn->reset();
+m_pnn->set_variable("dRTauTau", dRTauTau);
+m_pnn->set_variable("dRBB", dRBB);
+m_pnn->set_variable("mMMC", mMMC);
+m_pnn->set_variable("mBB", mBB);
+m_pnn->set_variable("mHH", mHH);
 
 // And evaluate at your masses of interest:
 for (const auto mass : masses) {
