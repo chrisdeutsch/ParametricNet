@@ -33,29 +33,24 @@ for (const auto mass : masses) {
 For example for a cvmfs-enabled CentOS7 device:
 ```bash
 setupATLAS
-lsetup "lcgenv -p LCG_96b x86_64-centos7-gcc62-opt Python pip"
-python -m pip install --user virtualenv
 
-# Create virtual environment
-python -m virtualenv pnn_training_env
+# Check 'lsetup "lcgenv -p LCG_96b x86_64-centos7-gcc62-opt"' for available packages
+lcg_reqs="Python
+pip
+numpy
+pandas
+scikitlearn
+keras
+tensorflow"
 
-# Activate environment and install packages
-source pnn_training_env/bin/activate
+for req in ${lcg_reqs}; do
+    echo "Setting up ${req}"
+    lsetup "lcgenv -p LCG_96b x86_64-centos7-gcc62-opt ${req}" > /dev/null
+done
 
-pip install numpy
-pip install pandas
-pip install sklearn
-pip install joblib
-pip install uproot
-pip install keras
-pip install tensorflow
-```
-
-If you return later it should suffice to do:
-```bash
-setupATLAS
-lsetup "lcgenv -p LCG_96b x86_64-centos7-gcc62-opt Python pip"
-source pnn_training_env/bin/activate
+# Not available in LGC env
+echo "Setting up uproot"
+python -m pip install --user uproot > /dev/null
 ```
 
 ## How to perform the training
