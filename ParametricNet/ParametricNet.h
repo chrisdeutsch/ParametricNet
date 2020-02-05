@@ -18,6 +18,9 @@ public:
   ParametricNet();
   ~ParametricNet();
 
+  // Set the lwtnn network configuration
+  // filename_even: Network trained on even event numbers
+  // filename_odd: Network trained on odd event numbers
   void init(const std::string &filename_even,
             const std::string &filename_odd);
 
