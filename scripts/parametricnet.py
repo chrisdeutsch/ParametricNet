@@ -80,4 +80,4 @@ class ParametricNet:
             self.sample_parameter(X[:, -1], Y)
 
             self.model.fit(X, Y, sample_weight=W, batch_size=self.batch_size,
-                           epochs=1, verbose=1, callbacks=[lr_printer])
+                           epochs=1, verbose=2, callbacks=[lr_printer])
