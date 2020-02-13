@@ -19,6 +19,12 @@ class DataLoader:
         self.input_vars = kwargs.setdefault(
             "input_vars", ["dRTauTau", "dRBB", "mMMC", "mBB", "mHH"])
 
+        # Weight name
+        self.weight_name = kwargs.setdefault("weight_name", "weight")
+
+        # Variable storing the event number
+        self.event_number_variable = kwargs.setdefault("event_number_variable", "event_number")
+
         # Selection
         self.fold = kwargs.setdefault("fold", "even")
         assert self.fold == "even" or self.fold == "odd"
@@ -80,12 +86,12 @@ class DataLoader:
 
 
     def apply_selection(self, df):
-        sel_pos_weight = df["weight"] > 0
+        sel_pos_weight = df[self.weight_name] > 0
 
         if self.fold == "even":
-            sel_fold = df["event_number"] % 2 == 0
+            sel_fold = df[self.event_number_variable] % 2 == 0
         elif self.fold == "odd":
-            sel_fold = df["event_number"] % 2 == 1
+            sel_fold = df[self.event_number_variable] % 2 == 1
         else:
             raise RuntimeError("Error in fold specification")
 
@@ -94,7 +100,7 @@ class DataLoader:
 
     def reweighting(self, sig_df, bkg_df):
         # Total background weight
-        bkg_weight = bkg_df["weight"].sum()
+        bkg_weight = bkg_df[self.weight_name].sum()
 
         # Equalize signal weights (total sig weight should match bkg)
         masspoints = sig_df.mass.unique()
@@ -103,13 +109,13 @@ class DataLoader:
 
         scale_map = {}
         for mass in masspoints:
-            weight_sum = sig_df.loc[sig_df.mass == mass, "weight"].sum()
+            weight_sum = sig_df.loc[sig_df.mass == mass, self.weight_name].sum()
             scale_map[mass] = weight_per_masspoint / weight_sum
 
             logging.info("Reweighting signal mass {} with factor {}".format(mass, scale_map[mass]))
 
-        bkg_df["weight_scaled"] = bkg_df["weight"]
-        sig_df["weight_scaled"] = sig_df["weight"] * sig_df["mass"].map(scale_map)
+        bkg_df["weight_scaled"] = bkg_df[self.weight_name]
+        sig_df["weight_scaled"] = sig_df[self.weight_name] * sig_df["mass"].map(scale_map)
 
         # Sanity check
         assert abs(sig_df["weight_scaled"].sum() - bkg_df["weight_scaled"].sum()) < 1e-3

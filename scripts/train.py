@@ -1,6 +1,5 @@
 #!/usr/bin/env python
 import argparse
-import joblib
 import json
 import logging
 
@@ -16,6 +15,8 @@ def main(args):
     data_loader.sig_tree_regex = args.sig_tree_regex
     data_loader.bkg_trees = args.bkg_trees
     data_loader.input_vars = args.input_vars
+    data_loader.weight_name = args.weight_name
+    data_loader.event_number_variable = args.event_number_variable
 
     X, Y, W = data_loader.load(args.ntuple)
 
@@ -54,11 +55,13 @@ if __name__ == "__main__":
 
     # DataLoader parameters
     parser.add_argument("--sig-tree-regex", default=r"(Xtohh(\d+))")
-    parser.add_argument("--bkg-trees", default=["ttbar", "stop", "Ztautau",
-                                                "Fake", "VH", "Diboson",
-                                                "Wtaunu"])
-    parser.add_argument("--input-vars", default=["dRTauTau", "dRBB", "mMMC",
-                                                 "mBB", "mHH"])
+    parser.add_argument("--bkg-trees", nargs="+",
+                        default=["ttbar", "stop", "Ztautau", "Fake", "VH",
+                                 "Diboson", "Wtaunu"])
+    parser.add_argument("--input-vars", nargs="+",
+                        default=["dRTauTau", "dRBB", "mMMC", "mBB", "mHH"])
+    parser.add_argument("--weight-name", default="weight")
+    parser.add_argument("--event-number-variable", default="event_number")
     parser.add_argument("--fold", choices=["even", "odd"], required=True)
 
     # ParametricNet parameters
