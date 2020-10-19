@@ -4,7 +4,7 @@ find_package(lwtnn)
 
 atlas_add_library(ParametricNet
     ParametricNet/*.h Root/*.h Root/*.cxx
-    PUBLIC_HEADERS ParametricNet
+    PUBLIC_HEADERS ParametricNet Net
     PRIVATE_INCLUDE_DIRS ${LWTNN_INCLUDE_DIRS}
     PRIVATE_LINK_LIBRARIES ${LWTNN_LIBRARIES}
 )

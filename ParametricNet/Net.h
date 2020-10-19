@@ -1,5 +1,5 @@
-#ifndef PARAMETRICNET_H_
-#define PARAMETRICNET_H_
+#ifndef NET_H_
+#define NET_H_
 
 #include <string>
 #include <map>
@@ -10,14 +10,13 @@ namespace lwt {
   class LightweightGraph;
 }
 
-// TODO: This should derive from Net
-class ParametricNet {
+class Net {
 
 public:
   enum class Fold {Even, Odd};
 
-  ParametricNet();
-  ~ParametricNet();
+  Net();
+  ~Net();
 
   // Set the lwtnn network configuration
   // filename_even: Network trained on even event numbers
@@ -26,7 +25,7 @@ public:
             const std::string &filename_odd);
   void reset();
   void set_variable(const std::string &name, const double val);
-  float evaluate(float parameter, Fold fold);
+  float evaluate(Fold fold);
 
 private:
   using ValueMap = std::map<std::string, double>;
@@ -35,7 +34,6 @@ private:
   const std::string m_input_layer_name;
   const std::string m_output_layer_name;
   const std::string m_output_node_name;
-  const std::string m_parameter_name;
 
   std::unique_ptr<const lwt::LightweightGraph> m_graph_even;
   std::unique_ptr<const lwt::LightweightGraph> m_graph_odd;
@@ -44,4 +42,4 @@ private:
   ValueMap *m_val_map;
 };
 
-#endif // PARAMETRICNET_H_
+#endif // NET_H_
