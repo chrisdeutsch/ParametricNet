@@ -81,3 +81,10 @@ class ParametricNet:
 
             self.model.fit(X, Y, sample_weight=W, batch_size=self.batch_size,
                            epochs=1, verbose=2, callbacks=[lr_printer])
+
+
+    def evaluate(self, X, param):
+        X_copy = np.copy(X)
+        X_copy[:, :-1] = self.scaler.transform(X[:, :-1])
+        X_copy[:, -1] = param
+        return self.model.predict(X_copy)
